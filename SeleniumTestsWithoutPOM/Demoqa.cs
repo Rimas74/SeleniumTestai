@@ -2,10 +2,10 @@
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace SeleniumTestsWithoutPOM
@@ -28,7 +28,7 @@ namespace SeleniumTestsWithoutPOM
         public void TestValidEmailInput()
         {
             string name="Jonas Jonaitis";
-            string eMailAddress= "jonasj.jonaitis@gmail.com";
+            string eMailAddress= "jonas.jonaitis@gmail.com";
             string currentAddress = "Karklu g. 5-5, Karklenai, Lietuva";
             string permanentAddress = "Varpu g. 15-1, Varniai, Lietuva";
                                   
@@ -45,6 +45,8 @@ namespace SeleniumTestsWithoutPOM
             currentAddressField.SendKeys(currentAddress);
             permanentAddressField.SendKeys(permanentAddress);
 
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromMilliseconds(500);
+
             ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].scrollIntoView(true);", submitButton);
             submitButton.Click();
 
@@ -54,15 +56,16 @@ namespace SeleniumTestsWithoutPOM
             IWebElement outputEmail = driver.FindElement(By.XPath("//*[@id='email']"));
 
             WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
-            wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id='currentAddress']")));
+            wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id='currentAddress']/parent::*")));
 
-            IWebElement outputCurrentAddress = driver.FindElement(By.Id("currentAddress")); //driver.FindElement(By.XPath("//textarea[@id = 'currentAddress']"));
-            //IWebElement outputPermanentAddress = driver.FindElement(By.XPath("//*[@id='permanentAddress']"));
+            //IWebElement outputCurrentAddress = driver.FindElement(By.XPath("//*[@id='currentAddress']")); //driver.FindElement(By.XPath("//textarea[@id = 'currentAddress']"));
+            IList<IWebElement> outputCurrentAddressList = driver.FindElements(By.XPath("//*[@id='currentAddress']"));
+            IList<IWebElement> outputPermanentAddressList = driver.FindElements(By.XPath("//*[@id='permanentAddress']"));
 
             Assert.AreEqual("Name:" + name, outputFullName.Text);
             Assert.AreEqual("Email:"+ eMailAddress, outputEmail.Text);
-            Assert.AreEqual(currentAddress, outputCurrentAddress.Text);
-            //Assert.AreEqual(permanentAddress, outputPermanentAddress.Text);
+            Assert.AreEqual("Current Address :"+ currentAddress, outputCurrentAddressList[1].Text);
+            Assert.AreEqual("Permananet Address :" + permanentAddress, outputPermanentAddressList[1].Text);
         }
         [Test]
     
