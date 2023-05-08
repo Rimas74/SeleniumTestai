@@ -20,7 +20,7 @@ namespace SeleniumTestsWithoutPOM
         public void Setup()
         {
             driver = new ChromeDriver();
-            //driver.Manage().Window.Maximize();
+            driver.Manage().Window.Maximize();
         }
 
 
@@ -49,16 +49,13 @@ namespace SeleniumTestsWithoutPOM
 
             ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].scrollIntoView(true);", submitButton);
             submitButton.Click();
-
-           
-
+                    
             IWebElement outputFullName = driver.FindElement(By.XPath("//*[@id='name']"));
             IWebElement outputEmail = driver.FindElement(By.XPath("//*[@id='email']"));
 
             WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
             wait.Until(ExpectedConditions.ElementIsVisible(By.XPath("//*[@id='currentAddress']/parent::*")));
 
-            //IWebElement outputCurrentAddress = driver.FindElement(By.XPath("//*[@id='currentAddress']")); //driver.FindElement(By.XPath("//textarea[@id = 'currentAddress']"));
             IList<IWebElement> outputCurrentAddressList = driver.FindElements(By.XPath("//*[@id='currentAddress']"));
             IList<IWebElement> outputPermanentAddressList = driver.FindElements(By.XPath("//*[@id='permanentAddress']"));
 
